@@ -1,0 +1,83 @@
+** Some Important concepts in php and also in this current project **
+
+1. set/define constants for file or target_file path (e.g,, stylesheet,images,assets etc).
+2. we can send values from one page to other via URL parameters also called as query parameters
+3. PHP store those URL_para_values in an associative array
+3. URL_para_values can be accessed through super_global variable $_GET[key_name].
+4. URL_para_values are always string although we send an integer value.
+5. Whenever use dynamic value, then always use any html-encoded method for output that value e.g,, htmlspecialchars().
+
+5. three methods for detect form submission
+		1-> check submit key value through isset($_POST['submit'])
+		2-> check every field key value through isset($_POST['name']),,etc
+		3-> checking the request method is post or get e.g.. 		$_SERVER['REQUEST_METHOD']=='POST' // and this is most usefull method
+6. if we define variable globally outside any function scope, then we have to use global keyword with that variable when using in function scope.
+7. MYSQL commands:
+		using cli in windows for mysql practice, we have to go to the "c:\xampp\mysql\bin" this directory or path then enter "mysql -u saad -p" this command.
+		Below are important SQL commands:
+			SHOW DATABASES;
+			USE db_name;
+			SHOW TABLES;
+			SHOW COLUMNS FROM table_name;
+
+// ************* Command For creating table*******
+			create table subjects(id INT(11) NOT NULL AUTO_INCREMENT,
+	    menu_name VARCHAR(255),
+	    position INT(3),
+	    visible TINYINT(1),
+	    PRIMARY KEY(id));
+
+	    create table pages(id INT(11) NOT NULL AUTO_INCREMENT,
+	    menu_name VARCHAR(255),
+	    position INT(3),
+	    visible TINYINT(1),
+	    subject_id INT,
+	    content TEXT,
+	    PRIMARY KEY(id),
+	    FOREIGN KEY(subject_id) REFERENCES subjects(id)
+
+	    );
+
+// Alter command for adding index for foreign key constraint
+
+	    Alter table pages add index fk_subject_id (subject_id);
+
+// Insert Commands
+
+	    insert into pages(menu_name,position,visible,subject_id,content) values('Banking',3,1,1,'some content for Banking');
+
+// Alternate way to insert data in database
+	    insert into subjects set menu_name='local',position=3,visible=1;
+------------------------------------------------------------------------
+
+Database APIs in PHP:
+
+
+For PHP Database interaction, there are 5 steps to follow:
+	1. Create a database connection
+	2. Perform a database query.
+	3. Use the returned data.
+	4. Release the returned data.
+	5. Close the database connection
+1st and last(5th) steps will only perform once in php script but other 3 steps will perform more than once in a script.
+	For database connection:
+		mysqli_connect($host,$user,$password,$dn_name);
+		$host is a location of a server to which we want to connect
+
+Important points about mysql:
+	1. select query returns the result set
+	2. Update, delete and create/insert queries returns the True or False
+
+------------------------------------------------------------
+Work with Retrieved data from database:
+	-> 3 methods for retrieving data from mysql database by using procedural mysqli database API
+			1. mysqli_fetch_row()
+				-> results are in standard array(index-array)
+				-> keys are integers
+			2. mysqli_fetch_assoc() Most preferable
+				-> results are in associative array.
+				-> keys are column names
+				-> this is more better method than the 1st one
+			3. mysqli_fetch_array()
+				-> Results are in either or both types of array
+				-> we use constants such as MYSQL_NUM,MYSQL_ASSOC,MYSQL_BOTH 

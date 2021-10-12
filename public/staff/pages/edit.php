@@ -9,19 +9,21 @@
  }
  
     $id = $_GET['id'];
-    $page_name = '';
-    $position = '';
-    $visible = '';
- if(is_post_request())
-  {
-    $page_name = $_POST['page_name'] ?? '';
-    $position = $_POST['position'] ?? '';
-    $visible = $_POST['visible'] ?? '';
+   if(is_post_request())
+    {
+      $page_name = $_POST['page_name'] ?? '';
+      $position = $_POST['position'] ?? '';
+      $visible = $_POST['visible'] ?? '';
 
-    echo "Page Name: {$page_name} <br>";
-    echo "Position: {$position} <br>";
-    echo "Visible: {$visible} <br>";
-  }
+    }
+    else{
+      // Fetch all subjects for subject dropdown
+       list($query_result,$subjects) = find_all("subjects");
+      // fetch specific page w.r.t id
+       list($query_result,$page) = find_single("pages",$id);
+
+    }
+
   
 
 ?>
@@ -36,21 +38,55 @@
     <form action="<?php echo url_for("/staff/pages/edit.php?id=".htmlspecialchars(u($id))); ?>" method="POST">
       <dl>
         <dt>Menu Name</dt>
-        <dd><input type="text" name="page_name" value="<?php echo $page_name; ?>"></dd>
+        <dd><input type="text" name="page_name" value="<?php echo $page['menu_name']; ?>"></dd>
       </dl>
       <dl>
-        <dt>Position</dt>
+        <dt>Position:</dt>
         <dd>
           <select name="position">
-            <option value="1" <?php echo ($position == 1) ? 'selected' : ''; ?>>1</option>
+            
           </select>
+        </dd>
+      </dl>
+       <dl>
+        <dt>Subject:</dt>
+        <dd>
+          <select name="subject_id">
+            <option disabled>select subject</option>
+            <?php 
+              $selected = ''; 
+              foreach ($subjects as $subject) 
+              {
+                if ($page['subject_id'] == $subject['id']) 
+                {
+                  $selected = 'selected';
+                }
+                else
+                {
+                  $selected = '';
+                }
+                echo "<option value='{$subject['id']}' $selected>
+                        {$subject['menu_name']}
+                      </option>";
+              }
+
+            ?>
+          </select>
+        </dd>
+      </dl>
+      <dl>
+        <dt>Page Description</dt>
+        <dd>
+          <textarea name="content" rows="5">
+            <?php echo $page['content']; ?> 
+          </textarea>
         </dd>
       </dl>
       <dl>
         <dt>Visible</dt>
         <dd>
           <input type="hidden" name="visible" value="0" />
-          <input type="checkbox" name="visible" value="1" <?php echo ($visible == 1) ? 'checked' : ''; ?> />
+          <input type="checkbox" name="visible" value="1" <?php echo ($page['visible'] == 1) ? 'checked' : ''; ?> />
         </dd>
       </dl>
       <div id="operations">

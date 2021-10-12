@@ -5,6 +5,8 @@
 
 	list($query_result,$page) = find_single("pages",$id);
 
+	list($query_result,$subject) = find_single("subjects",$page['subject_id']);
+
 	$query_result->free_result();
 
 ?>
@@ -27,8 +29,8 @@
 				<dd><?php echo $page['position']; ?></dd>
 			</dl>
 			<dl>
-				<dt>Subject Id:</dt>
-				<dd><?php echo $page['subject_id']; ?></dd>
+				<dt>Subject Name:</dt>
+				<dd><?php echo $subject['menu_name']; ?></dd>
 			</dl>
 			<dl>
 				<dt>Visible:</dt>

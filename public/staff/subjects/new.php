@@ -3,23 +3,13 @@
 
  require_once('../../../private/initialize.php');
  
+ list($query_result,$subjects) = find_all("subjects");
 
- $menu_name = '';
- $position = '';
- $visible = '';
-
- if(is_post_request())
-  {
-    $menu_name = $_POST['menu_name'] ?? '';
-    $position = $_POST['position'] ?? '';
-    $visible = $_POST['visible'] ?? '';
-
-    echo "Menu Name: {$menu_name} <br>";
-    echo "Position: {$position} <br>";
-    echo "Visible: {$visible} <br>";
-  }
+  $total_subjects = $query_result->num_rows + 1; 
+  $subject = [];
+  $subject['position'] = $total_subjects; 
+  $query_result->free_result();
   
-
 ?>
 
 <?php $page_title = 'Create Subject'; ?>
@@ -32,13 +22,24 @@
     <form action="<?php echo url_for("/staff/subjects/create.php"); ?>" method="POST">
       <dl>
         <dt>Menu Name</dt>
-        <dd><input type="text" name="menu_name" value="<?php echo $menu_name; ?>"></dd>
+        <dd><input type="text" name="menu_name" value="<?php echo ($menu_name)?? ''; ?>"></dd>
       </dl>
       <dl>
         <dt>Position</dt>
         <dd>
           <select name="position">
-            <option value="1" <?php echo ($position == 1) ? 'selected' : ''; ?>>1</option>
+            <?php
+              $selected = '';
+              for($i=1;$i<=$total_subjects;$i++) {
+                if ($subject['position'] == $i) {
+                  $selected = 'selected';
+                }
+                 echo "<option value='{$i}' {$selected}>
+                          {$i}
+                       </option>"; 
+              }
+
+            ?>
           </select>
         </dd>
       </dl>
@@ -46,7 +47,7 @@
         <dt>Visible</dt>
         <dd>
           <input type="hidden" name="visible" value="0" />
-          <input type="checkbox" name="visible" value="1" <?php echo ($visible == 1) ? 'checked' : ''; ?> />
+          <input type="checkbox" name="visible" value="1" />
         </dd>
       </dl>
       <div id="operations">

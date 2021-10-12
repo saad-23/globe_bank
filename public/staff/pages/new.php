@@ -2,21 +2,13 @@
  ob_start(); // Output buffering is turned on
 
  require_once('../../../private/initialize.php');
- 
- $menu_name = '';
- $position = '';
- $visible = '';
 
- if(is_post_request())
-  {
-    $menu_name = $_POST['menu_name'] ?? '';
-    $position = $_POST['position'] ?? '';
-    $visible = $_POST['visible'] ?? '';
-
-    echo "Menu Name: {$menu_name} <br>";
-    echo "Position: {$position} <br>";
-    echo "Visible: {$visible} <br>";
-  }
+    list($query_result,$pages) = find_all("pages");
+    list($query_result,$subjects) = find_all("subjects");
+    $total_pages = $query_result->num_rows + 1;
+    $page = [];
+    $page['position'] = $total_pages;
+    $query_result->free_result();
   
 
 ?>
@@ -28,24 +20,61 @@
   <a class="back-link" href="<?php echo url_for("/staff/pages/index.php"); ?>">&laquo; Back to list</a>
   <div class="subject new">
     <h1>Create Page</h1>
-    <form action="<?php echo url_for("/staff/pages/new.php"); ?>" method="POST">
+    <form action="<?php echo url_for("/staff/pages/create.php"); ?>" method="POST">
       <dl>
         <dt>Page Name</dt>
-        <dd><input type="text" name="menu_name" value="<?php echo $menu_name; ?>"></dd>
+        <dd><input type="text" name="menu_name" value="<?php echo ($menu_name)?? ''; ?>"></dd>
       </dl>
       <dl>
         <dt>Position</dt>
         <dd>
           <select name="position">
-            <option value="1" <?php echo ($position == 1) ? 'selected' : ''; ?>>1</option>
+            <?php
+              $selected = '';
+              for($i=1; $i <= $total_pages; $i++) 
+              { 
+                if ($page['position'] == $i) 
+                {
+                    $selected = 'selected';
+                }
+                else{
+                  $selected = '';
+                }  
+                echo "<option value='{$i}' $selected>{$i}</option>";
+              }
+
+            ?>
           </select>
+        </dd>
+      </dl>
+      <dl>
+        <dt>Subject:</dt>
+        <dd>
+          <select name="subject_id">
+            <option disabled selected>select subject</option>
+            <?php  
+              foreach ($subjects as $subject) 
+              {
+                echo "<option value='{$subject['id']}'>
+                        {$subject['menu_name']}
+                      </option>";
+              }
+
+            ?>
+          </select>
+        </dd>
+      </dl>
+      <dl>
+        <dt>Page Description</dt>
+        <dd>
+          <textarea name="content" rows="5"></textarea>
         </dd>
       </dl>
       <dl>
         <dt>Visible</dt>
         <dd>
           <input type="hidden" name="visible" value="0" />
-          <input type="checkbox" name="visible" value="1" <?php echo ($visible == 1) ? 'checked' : ''; ?> />
+          <input type="checkbox" name="visible" value="1" <?php echo (isset($visible) && $visible == 1) ? 'checked' : ''; ?> />
         </dd>
       </dl>
       <div id="operations">

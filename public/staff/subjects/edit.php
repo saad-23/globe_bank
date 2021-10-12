@@ -10,18 +10,24 @@
 
    
    $id = $_GET['id'];
-   $menu_name= '';
-   $position = '';
-   $visible = '';
+
    if(is_post_request())
     {
-      $menu_name = $_POST['menu_name'] ?? '';
-      $position = $_POST['position'] ?? '';
-      $visible = $_POST['visible'] ?? '';
-
-      echo "Menu Name: {$menu_name} <br>";
-      echo "Position: {$position} <br>";
-      echo "Visible: {$visible} <br>";
+      $subject = [];
+      $subject['id'] = $id;
+      $subject['menu_name'] = $_POST['menu_name'] ?? '';
+      $subject['position'] = $_POST['position'] ?? '';
+      $subject['visible'] = $_POST['visible'] ?? '';
+      $result = update_record("subjects",$subject);  
+      redirect_to(url_for("/staff/subjects/show.php?id={$subject['id']}"));
+ 
+    }
+    else{
+      list($query_result,$sub) = find_single("subjects",$id);
+      list($query_result,$subjects) = find_all("subjects");
+      // print_r($sub);exit();
+      $total_subjects = $query_result->num_rows; 
+      $query_result->free_result();
     }
     
 
@@ -39,13 +45,30 @@
     <form action="<?php echo url_for("/staff/subjects/edit.php?id=".htmlspecialchars(u($id))); ?>" method="POST">
       <dl>
         <dt>Menu Name</dt>
-        <dd><input type="text" name="menu_name" value="<?php echo $menu_name; ?>"></dd>
+        <dd><input type="text" name="menu_name" value="<?php echo $sub['menu_name']; ?>"></dd>
       </dl>
       <dl>
         <dt>Position</dt>
         <dd>
           <select name="position">
-            <option value="1" <?php echo ($position == 1) ? 'selected' : ''; ?>>1</option>
+             <?php
+              $selected = '';
+              for($i=1; $i<=$total_subjects;$i++) 
+              {
+                  if ($sub['position'] == $i) 
+                  {
+                    $selected = 'selected';
+                  }
+                  else
+                  {
+                    $selected = '';
+
+                  }
+                  echo "<option value='{$i}' {$selected}>{$i}</option>"; 
+                
+              }
+
+            ?>
           </select>
         </dd>
       </dl>
@@ -53,7 +76,7 @@
         <dt>Visible</dt>
         <dd>
           <input type="hidden" name="visible" value="0" />
-          <input type="checkbox" name="visible" value="1" <?php echo ($visible == 1) ? 'checked' : ''; ?> />
+          <input type="checkbox" name="visible" value="1" <?php echo ($sub['visible'] == 1) ? 'checked' : ''; ?> />
         </dd>
       </dl>
       <div id="operations">

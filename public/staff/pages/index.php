@@ -23,6 +23,7 @@
         <th>Subject ID</th>
         <th>Visible</th>
   	    <th>Name</th>
+        <th>Content</th>
   	    <th colspan="3">Actions</th>
   	  </tr>
 
@@ -32,10 +33,11 @@
           <td><?php echo htmlspecialchars($page['position']); ?></td>
           <td><?php echo htmlspecialchars($page['subject_id']); ?></td>
           <td><?php echo $page['visible'] == 1 ? 'true' : 'false'; ?></td>
-    	    <td><?php echo htmlspecialchars($page['menu_name']); ?></td>
+          <td><?php echo htmlspecialchars($page['menu_name']); ?></td>
+    	    <td><?php echo htmlspecialchars($page['content']); ?></td>
           <td><a class="action" href="<?php echo url_for("/staff/pages/show.php?id=".htmlspecialchars(u($page['id']))); ?>">View</a></td>
           <td><a class="action" href="<?php echo url_for("/staff/pages/edit.php?id=".htmlspecialchars(u($page['id']))); ?>">Edit</a></td>
-          <td><a class="action" href="">Delete</a></td>
+          <td><a class="action" href="<?php echo url_for("/staff/pages/delete.php?id=".htmlspecialchars(u($page['id']))); ?>">Delete</a></td>
     	  </tr>
       <?php } ?>
   	</table>

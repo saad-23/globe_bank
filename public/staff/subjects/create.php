@@ -7,10 +7,22 @@
 		$subject['menu_name'] = htmlspecialchars($_POST['menu_name']) ?? '';
 		$subject['position'] = htmlspecialchars($_POST['position']) ?? '';
 		$subject['visible'] = htmlspecialchars($_POST['visible']) ?? '';
+
 		$result = insert_record("subjects",$subject);
-		
+
+		if ($result === true) 
+		{
 			$newRecordID = $db->insert_id;
 			redirect_to(url_for("/staff/subjects/show.php?id={$newRecordID}"));
+		}
+		else
+		{
+			$errors = $result;
+			var_dump($errors);
+		}
+
+		
+			
 		
 	}
 	else{

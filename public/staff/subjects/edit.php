@@ -13,13 +13,21 @@
 
    if(is_post_request())
     {
-      $subject = [];
-      $subject['id'] = $id;
-      $subject['menu_name'] = $_POST['menu_name'] ?? '';
-      $subject['position'] = $_POST['position'] ?? '';
-      $subject['visible'] = $_POST['visible'] ?? '';
-      $result = update_record("subjects",$subject);  
-      redirect_to(url_for("/staff/subjects/show.php?id={$subject['id']}"));
+        $subject = [];
+        $subject['id'] = $id;
+        $subject['menu_name'] = $_POST['menu_name'] ?? '';
+        $subject['position'] = $_POST['position'] ?? '';
+        $subject['visible'] = $_POST['visible'] ?? '';
+        $result = update_record("subjects",$subject); 
+         if ($result === true) 
+         {
+            redirect_to(url_for("/staff/subjects/show.php?id={$subject['id']}"));
+         } 
+         else
+         {
+            $errors = $result;
+            print_r($errors);
+         }
  
     }
     else{
@@ -45,7 +53,7 @@
     <form action="<?php echo url_for("/staff/subjects/edit.php?id=".htmlspecialchars(u($id))); ?>" method="POST">
       <dl>
         <dt>Menu Name</dt>
-        <dd><input type="text" name="menu_name" value="<?php echo $sub['menu_name']; ?>"></dd>
+        <dd><input type="text" name="menu_name" value="<?php echo ($sub['menu_name']) ?? ''; ?>"></dd>
       </dl>
       <dl>
         <dt>Position</dt>
@@ -76,7 +84,7 @@
         <dt>Visible</dt>
         <dd>
           <input type="hidden" name="visible" value="0" />
-          <input type="checkbox" name="visible" value="1" <?php echo ($sub['visible'] == 1) ? 'checked' : ''; ?> />
+          <input type="checkbox" name="visible" value="1" <?php echo (isset($sub['visible']) && $sub['visible'] == 1) ? 'checked' : ''; ?> />
         </dd>
       </dl>
       <div id="operations">

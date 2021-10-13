@@ -18,11 +18,59 @@
 		$data = $query_result->fetch_assoc();
 		return [$query_result,$data];
 	}
+	
+	function validate_subject($items) {
+
+	  $errors = [];
+	  
+	  // menu_name
+	  if(is_blank($items['menu_name'])) {
+	    $errors[] = "Menu Name cannot be blank.";
+	  }elseif(!has_length($items['menu_name'], ['min' => 2, 'max' => 255])) {
+	    $errors[] = "Menu Name must be between 2 and 255 characters.";
+	  }
+
+	  // position
+	  // Make sure we are working with an integer
+	  $postion_int = (int) $items['position'];
+	  if($postion_int <= 0) {
+	    $errors[] = "Position must be greater than zero.";
+	  }
+	  if($postion_int > 999) {
+	    $errors[] = "Position must be less than 999.";
+	  }
+
+	  // visible
+	  // Make sure we are working with a string
+	  $visible_str = (string) $items['visible'];
+	  if(!has_inclusion_of($visible_str, ["0","1"])) {
+	    $errors[] = "Visible must be true or false.";
+	  }
+
+	  return $errors;
+}
+
 
 	function insert_record($table_name,$params) {
 		global $db;
+		$errors = validate_subject($params);
+		if (!empty($errors)) 
+		{
+			 return $errors;
+		}
+
 		extract($params);
-		$sql = "INSERT INTO {$table_name} SET menu_name = '{$menu_name}',position = '{$position}',visible = '{$visible}'";
+				$sql = "INSERT INTO {$table_name} SET menu_name = '{$menu_name}',position = '{$position}',";
+				if(isset($subject_id))
+				{
+					$sql .= "subject_id = '{$subject_id}', ";
+				}
+				if(isset($content))
+				{
+					$sql .= "content = '{$content}',";
+				}
+					$sql .= "visible = '{$visible}' ";
+
 		$result = $db->query($sql);
 		if ($result) {
 			return true;
@@ -37,11 +85,29 @@
 
 	function update_record($table_name,$params) {
 		global $db;
+		$errors = validate_subject($params);
+		if (!empty($errors)) 
+		{
+			 return $errors;
+		}
+
 		extract($params);
 
-		$sql = "UPDATE subjects SET ";
-		$sql .= "menu_name = '{$menu_name}',position='{$position}',visible='{$visible}' ";
-		$sql .= "WHERE id = '{$id}' LIMIT 1";
+				$sql = "UPDATE {$table_name} SET ";
+				$sql .= "menu_name = '{$menu_name}',position='{$position}', ";
+				if(isset($subject_id))
+				{
+					$sql .= "subject_id = '{$subject_id}', ";
+				}
+				if(isset($content))
+				{
+					$sql .= "content = '{$content}', ";
+				}
+				$sql .= "visible = '{$visible}' ";
+				$sql .= "WHERE id = '{$id}' LIMIT 1";
+
+				// echo $sql;exit();
+
 		$query_result = $db->query($sql);
 		if ($query_result) {
 			return true;

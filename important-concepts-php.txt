@@ -55,10 +55,16 @@ Database APIs in PHP:
 
 For PHP Database interaction, there are 5 steps to follow:
 	1. Create a database connection
+			-> mysqli_connect('hostname','username','password','DBname')
 	2. Perform a database query.
+			-> mysqli_query($conn,$sql)
 	3. Use the returned data.
+			-> mysqli_fetch_all() and loop through the data returned and show it or pass it to another file.
 	4. Release the returned data.
+			-> mysqli_free_result($result_set)
 	5. Close the database connection
+			-> mysqli_close($conn)
+
 1st and last(5th) steps will only perform once in php script but other 3 steps will perform more than once in a script.
 	For database connection:
 		mysqli_connect($host,$user,$password,$dn_name);
@@ -70,7 +76,7 @@ Important points about mysql:
 
 ------------------------------------------------------------
 Work with Retrieved data from database:
-	-> 3 methods for retrieving data from mysql database by using procedural mysqli database API
+	-> 4 methods for retrieving data from mysql database by using procedural mysqli database API
 			1. mysqli_fetch_row()
 				-> results are in standard array(index-array)
 				-> keys are integers
@@ -81,3 +87,19 @@ Work with Retrieved data from database:
 			3. mysqli_fetch_array()
 				-> Results are in either or both types of array
 				-> we use constants such as MYSQL_NUM,MYSQL_ASSOC,MYSQL_BOTH 
+			4. mysqli_fetch_all()
+				-> All the data from table get at once.
+				-> we use constants such as MYSQL_NUM,MYSQL_ASSOC,MYSQL_BOTH 
+				-> I prefer this method mostly, because we don't have to send request to DB again and again for retreiving.
+-----------------------------------------
+	Some Validation Tips and useful Info
+-----------------------------------------
+	1. Validation should be applied before creating/updating records in DB.
+	2. Same validations used for both creating and updating.
+	3. Its better to put validation code in a reusable function
+	4. If validations fail, then creating or updation must be prevented.
+	5. Keep track the errors and display/Report them to user.
+	6. Reporting all the errors at once is the best user experience.
+	 
+
+

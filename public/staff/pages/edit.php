@@ -3,24 +3,38 @@
 
  require_once('../../../private/initialize.php');
  
- if (!isset($_GET['id'])) 
- {
-   redirect_to(url_for("/staff/pages/index.php"));
- }
+   if (!isset($_GET['id'])) 
+   {
+     redirect_to(url_for("/staff/pages/index.php"));
+   }
  
-    $id = $_GET['id'];
+   $id = $_GET['id'];
    if(is_post_request())
     {
-      $page_name = $_POST['page_name'] ?? '';
-      $position = $_POST['position'] ?? '';
-      $visible = $_POST['visible'] ?? '';
+      $page = [];
+      $page['id'] = $id;
+      $page['menu_name'] = $_POST['menu_name'] ?? '';
+      $page['position'] = $_POST['position'] ?? '';
+      $page['subject_id'] = $_POST['subject_id'] ?? '';
+      $page['visible'] = $_POST['visible'] ?? '';
+      $page['content'] = $_POST['content'] ?? '';
+
+      $result = update_record("pages",$page);
+      redirect_to(url_for("/staff/pages/index.php"));
 
     }
     else{
       // Fetch all subjects for subject dropdown
-       list($query_result,$subjects) = find_all("subjects");
+       list($sq_result,$subjects) = find_all("subjects");
+      // Fetch all subjects for subject dropdown
+       list($pq_result,$pages) = find_all("pages");
+       $total_pages = $pq_result->num_rows;
       // fetch specific page w.r.t id
-       list($query_result,$page) = find_single("pages",$id);
+       list($pgsq_result,$page) = find_single("pages",$id);
+
+       $sq_result->free_result();
+       $pq_result->free_result();
+       $pgsq_result->free_result();
 
     }
 
@@ -38,13 +52,27 @@
     <form action="<?php echo url_for("/staff/pages/edit.php?id=".htmlspecialchars(u($id))); ?>" method="POST">
       <dl>
         <dt>Menu Name</dt>
-        <dd><input type="text" name="page_name" value="<?php echo $page['menu_name']; ?>"></dd>
+        <dd><input type="text" name="menu_name" value="<?php echo $page['menu_name']; ?>"></dd>
       </dl>
       <dl>
         <dt>Position:</dt>
         <dd>
           <select name="position">
-            
+            <?php
+              $selected = '';
+              for($i=1; $i <= $total_pages; $i++) 
+              { 
+                if ($page['position'] == $i) 
+                {
+                    $selected = 'selected';
+                }
+                else{
+                  $selected = '';
+                }  
+                echo "<option value='{$i}' $selected>{$i}</option>";
+              }
+
+            ?>
           </select>
         </dd>
       </dl>

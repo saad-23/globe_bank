@@ -20,18 +20,22 @@
   	  <tr>
         <th>ID</th>
         <th>Position</th>
-        <th>Subject ID</th>
+        <th>Subject</th>
         <th>Visible</th>
   	    <th>Name</th>
         <th>Content</th>
   	    <th colspan="3">Actions</th>
   	  </tr>
 
-      <?php foreach($page_records as $page) { ?>
+      <?php foreach($page_records as $page) 
+            { 
+              list($sq_result,$subject) = find_single("subjects",$page['subject_id']); 
+
+        ?>
         <tr>
           <td><?php echo htmlspecialchars($page['id']); ?></td>
           <td><?php echo htmlspecialchars($page['position']); ?></td>
-          <td><?php echo htmlspecialchars($page['subject_id']); ?></td>
+          <td><?php echo ($subject['menu_name']) ?? ''; ?></td>
           <td><?php echo $page['visible'] == 1 ? 'true' : 'false'; ?></td>
           <td><?php echo htmlspecialchars($page['menu_name']); ?></td>
     	    <td><?php echo htmlspecialchars($page['content']); ?></td>
@@ -41,7 +45,11 @@
     	  </tr>
       <?php } ?>
   	</table>
+    <?php
+      $result_set->free_result();
+      $sq_result->free_result();
 
+    ?>
   </div>
 
 </div>

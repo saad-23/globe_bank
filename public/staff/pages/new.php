@@ -3,12 +3,14 @@
 
  require_once('../../../private/initialize.php');
 
-    list($query_result,$pages) = find_all("pages");
-    list($query_result,$subjects) = find_all("subjects");
-    $total_pages = $query_result->num_rows + 1;
+    list($sq_result,$subjects) = find_all("subjects");
+    list($pq_result,$pages) = find_all("pages");
+
+    $total_pages = $pq_result->num_rows + 1;
     $page = [];
     $page['position'] = $total_pages;
-    $query_result->free_result();
+    $sq_result->free_result();
+    $pq_result->free_result();
   
 
 ?>

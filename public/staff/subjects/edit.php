@@ -10,7 +10,7 @@
 
    
    $id = $_GET['id'];
-
+   $sub = [];
    if(is_post_request())
     {
         $subject = [];
@@ -26,17 +26,18 @@
          else
          {
             $errors = $result;
-            print_r($errors);
+            // print_r($errors);
          }
  
     }
     else{
       list($query_result,$sub) = find_single("subjects",$id);
-      list($query_result,$subjects) = find_all("subjects");
+    }
+
+     list($query_result,$subjects) = find_all("subjects");
       // print_r($sub);exit();
       $total_subjects = $query_result->num_rows; 
       $query_result->free_result();
-    }
     
 
 
@@ -50,28 +51,36 @@
   <a class="back-link" href="<?php echo url_for("/staff/subjects/index.php"); ?>">&laquo; Back to list</a>
   <div class="subject edit">
     <h1>Edit Subject</h1>
+    <?php echo display_errors($errors);  ?>
     <form action="<?php echo url_for("/staff/subjects/edit.php?id=".htmlspecialchars(u($id))); ?>" method="POST">
       <dl>
         <dt>Menu Name</dt>
-        <dd><input type="text" name="menu_name" value="<?php echo ($sub['menu_name']) ?? ''; ?>"></dd>
+        <dd><input type="text" name="menu_name" value="<?php echo get_field_value('menu_name',$sub); ?>"></dd>
       </dl>
       <dl>
         <dt>Position</dt>
         <dd>
           <select name="position">
              <?php
-              $selected = '';
+              // $selected = '';
+              // echo get_field_value("position",$sub);exit;
               for($i=1; $i<=$total_subjects;$i++) 
               {
-                  if ($sub['position'] == $i) 
-                  {
-                    $selected = 'selected';
-                  }
-                  else
-                  {
-                    $selected = '';
+                // $selected = ($subject['position'] === $i) ? 'selected' : 
+                //             ($sub['position'] === $i ? 'selected' : '');
 
-                  }
+                $selected = get_field_value("position",$sub) == $i ? 'selected' : '';
+
+                  // if ($sub['position'] === $i) 
+                  // {
+                  //   $selected = 'selected';
+                  // }
+                  // else
+                  // {
+
+                  //   $selected = '';
+
+                  // }
                   echo "<option value='{$i}' {$selected}>{$i}</option>"; 
                 
               }
@@ -84,7 +93,7 @@
         <dt>Visible</dt>
         <dd>
           <input type="hidden" name="visible" value="0" />
-          <input type="checkbox" name="visible" value="1" <?php echo (isset($sub['visible']) && $sub['visible'] == 1) ? 'checked' : ''; ?> />
+          <input type="checkbox" name="visible" value="1" <?php echo get_field_value("visible",$sub) == 1 ? 'checked' : ''; ?> />
         </dd>
       </dl>
       <div id="operations">

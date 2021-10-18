@@ -18,7 +18,10 @@
 		else
 		{
 			$errors = $result;
-			var_dump($errors);
+			session_start();
+			$_SESSION['errors'] = $errors;
+			redirect_to(url_for("/staff/subjects/new.php"));
+			
 		}
 
 		

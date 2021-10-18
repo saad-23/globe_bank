@@ -20,24 +20,31 @@
       $page['content'] = $_POST['content'] ?? '';
 
       $result = update_record("pages",$page);
-      redirect_to(url_for("/staff/pages/index.php"));
+      if ($result === true) 
+      {
+        redirect_to(url_for("/staff/pages/index.php")); 
+      }
+      else
+      {
+        $errors = $result;
+      }
 
     }
     else{
-      // Fetch all subjects for subject dropdown
+      
+      // fetch specific page w.r.t id
+       list($pgsq_result,$page) = find_single("pages",$id);
+       $pgsq_result->free_result();
+
+    }
+    // Fetch all subjects for subject dropdown
        list($sq_result,$subjects) = find_all("subjects");
       // Fetch all subjects for subject dropdown
        list($pq_result,$pages) = find_all("pages");
        $total_pages = $pq_result->num_rows;
-      // fetch specific page w.r.t id
-       list($pgsq_result,$page) = find_single("pages",$id);
 
-       $sq_result->free_result();
+        $sq_result->free_result();
        $pq_result->free_result();
-       $pgsq_result->free_result();
-
-    }
-
   
 
 ?>
@@ -49,10 +56,11 @@
   <a class="back-link" href="<?php echo url_for("/staff/pages/index.php"); ?>">&laquo; Back to list</a>
   <div class="page edit">
     <h1>Edit Page</h1>
+    <?php echo display_errors($errors);  ?>
     <form action="<?php echo url_for("/staff/pages/edit.php?id=".htmlspecialchars(u($id))); ?>" method="POST">
       <dl>
         <dt>Menu Name</dt>
-        <dd><input type="text" name="menu_name" value="<?php echo $page['menu_name']; ?>"></dd>
+        <dd><input type="text" name="menu_name" value="<?php echo get_field_value('menu_name',$page); ?>"></dd>
       </dl>
       <dl>
         <dt>Position:</dt>
@@ -62,13 +70,7 @@
               $selected = '';
               for($i=1; $i <= $total_pages; $i++) 
               { 
-                if ($page['position'] == $i) 
-                {
-                    $selected = 'selected';
-                }
-                else{
-                  $selected = '';
-                }  
+                $selected = get_field_value("position",$page) == $i ? 'selected' : '';
                 echo "<option value='{$i}' $selected>{$i}</option>";
               }
 
@@ -85,14 +87,8 @@
               $selected = ''; 
               foreach ($subjects as $subject) 
               {
-                if ($page['subject_id'] == $subject['id']) 
-                {
-                  $selected = 'selected';
-                }
-                else
-                {
-                  $selected = '';
-                }
+                $selected = get_field_value("subject_id",$page) == $subject['id'] ? 'selected' : ''; 
+                
                 echo "<option value='{$subject['id']}' $selected>
                         {$subject['menu_name']}
                       </option>";
@@ -114,7 +110,7 @@
         <dt>Visible</dt>
         <dd>
           <input type="hidden" name="visible" value="0" />
-          <input type="checkbox" name="visible" value="1" <?php echo ($page['visible'] == 1) ? 'checked' : ''; ?> />
+          <input type="checkbox" name="visible" value="1" <?php echo get_field_value("visible",$page) == 1 ? 'checked' : ''; ?> />
         </dd>
       </dl>
       <div id="operations">

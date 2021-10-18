@@ -48,5 +48,29 @@ function is_get_request()
 	return $_SERVER['REQUEST_METHOD'] == 'GET';
 }
 
+function display_errors($errors = array())
+{
+	$output = "";
+	if (!empty($errors)) 
+	{
+		$output = "<div class='errors'>";
+		$output .= "<ul>";
+		$output .= "Please fill the following fields:";
+		foreach ($errors as $error) {
+			$output .= "<li>";
+				$output .= "{$error}";
+			$output .= "</li>";
 
+		}
+		$output .= "</ul>";
+		$output .= "</div>";
+	}
+	return $output;
+}
+
+
+// This function will return a string type value 
+function get_field_value($field_name,$edit_array=[]) {
+	return ($_POST[$field_name]) ?? $edit_array[$field_name] ?? '';
+}
 ?>

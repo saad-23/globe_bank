@@ -12,7 +12,10 @@
 		2-> check every field key value through isset($_POST['name']),,etc
 		3-> checking the request method is post or get e.g.. 		$_SERVER['REQUEST_METHOD']=='POST' // and this is most usefull method
 6. if we define variable globally outside any function scope, then we have to use global keyword with that variable when using in function scope.
-7. MYSQL commands:
+
+7. We can pass array or multiple values in query string as parameters
+		-> someUrl.com?str_arr[]="value"&str_arr[]="value2"
+8. MYSQL commands:
 		using cli in windows for mysql practice, we have to go to the "c:\xampp\mysql\bin" this directory or path then enter "mysql -u saad -p" this command.
 		Below are important SQL commands:
 			SHOW DATABASES;

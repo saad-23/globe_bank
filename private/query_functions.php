@@ -47,6 +47,22 @@
 	    $errors[] = "Visible must be true or false.";
 	  }
 
+	  if (isset($items['subject_id'])) 
+	  {
+	  	 $subject_id = (int) $items['subject_id'];
+	  	 if (is_blank($subject_id)) {
+	  	 		$errors[] = "Subject field will not be empty";
+	  	 }
+	  }
+
+	  if (isset($items['content'])) 
+	  {
+	  	 $content = $items['content'];
+	  	 if (is_blank($content)) {
+	  	 		$errors[] = "content field will not be empty";
+	  	 }
+	  }
+
 	  return $errors;
 }
 
